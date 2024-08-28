@@ -30,9 +30,7 @@ struct Size {
     int rows = 0;
     int cols = 0;
 
-    bool operator==(Size rhs) const {
-        return cols == rhs.cols && rows == rhs.rows;
-    }
+    bool operator==(Size rhs) const;
 };
 
 // Описывает ошибки, которые могут возникнуть при вычислении формулы.
@@ -50,25 +48,13 @@ public:
 
     bool operator==(FormulaError rhs) const;
 
-    std::string_view ToString() const {
-        using namespace std::literals;
-        switch (category_)
-        {
-        case FormulaError::Category::Ref: return "#REF!"sv;
-        case FormulaError::Category::Value: return "#VALUE!"sv;
-        case FormulaError::Category::Arithmetic: return "#ARITHM!"sv;
-        default: break;
-        }
-        return ""sv;
-    }
+    std::string_view ToString() const;
 
 private:
     Category category_;
 };
 
-std::ostream& operator<<(std::ostream& output, FormulaError fe) {
-    output << fe.ToString();
-}
+std::ostream& operator<<(std::ostream& output, FormulaError fe);
 
 // Исключение, выбрасываемое при попытке передать в метод некорректную позицию
 class InvalidPositionException : public std::out_of_range {
