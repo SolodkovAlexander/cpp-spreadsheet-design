@@ -40,7 +40,9 @@ public:
 
         // У ячеек, от которых зависело значение тек. ячейки: убираем связь
         for (auto referenced_cell : GetReferencedCells()) {
-            sheet_.GetConcreteCell(referenced_cell)->cells_from_.erase(this);
+            if (referenced_cell.IsValid()) {
+                sheet_.GetConcreteCell(referenced_cell)->cells_from_.erase(this);    
+            }            
         }
 
         // Определяем новую реализацию
