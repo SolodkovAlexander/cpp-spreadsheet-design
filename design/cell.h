@@ -36,6 +36,7 @@ private:
             virtual Value GetValue() const = 0;
             virtual std::string GetText() const = 0;
             virtual std::string GetInitialText() const = 0;
+            virtual void InvalidateCache() const;
     };
     class EmptyImpl final : public Impl {
         public:
@@ -58,6 +59,7 @@ private:
             Value GetValue() const override;
             std::string GetText() const override;
             std::string GetInitialText() const override;
+            void InvalidateCache() const override;
             std::vector<Position> GetReferencedCells() const;
 
         private: 
@@ -66,11 +68,11 @@ private:
             // таблица ячейки 
             // (необходима для получения доступа к ячейкам в случае формульных ячеек, содержащих в формулах индексы на ячейки)
             Sheet& sheet_;
+            // Кэш вычисленного значения
+            mutable std::optional<Value> value_cache_;
     };
 
 private:
-    void ClearValueCache();
-
     bool CheckCircularDependency(const std::vector<Position>& referenced_cells) const;
 
     bool CheckCircularDependency(Position cell_position, std::vector<Position>& checked_cells) const;
@@ -82,8 +84,5 @@ private:
 
     // ячейки, которые ссылаются на текущую ячейку (т.е. ячейки, чье вычисление значения зависит от текущей ячейки)
     // (необходим для инвалидации кэша)
-    std::unordered_set<Cell*> cells_from_; 
-
-    // Кэш вычисленного значения
-    mutable std::optional<Value> value_cache_;
+    std::unordered_set<Cell*> cells_from_;
 };
